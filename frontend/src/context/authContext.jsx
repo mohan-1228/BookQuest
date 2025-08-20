@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { authAPI } from "../services/api";
+import { API_BASE_URL } from "../services/api";
 
 const AuthContext = createContext();
 
@@ -12,92 +12,105 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Check if user is logged in on app load
     const token = localStorage.getItem("token");
-    if (token) {
-      authAPI
-        .getProfile()
-        .then((response) => {
-          // Ensure user has a role property with default value
-          const user = response.data.user;
-          if (!user.role) {
-            user.role = "user"; // Default role
-          }
-          setCurrentUser(user);
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
+    const savedUser = localStorage.getItem("user");
+
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser));
     }
+
+    setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const register = async (userData) => {
     try {
-      const response = await authAPI.login({ email, password });
-      const { token, user } = response.data.user;
+      console.log("Sending registration data:", userData);
 
-      localStorage.setItem("token", token);
-      setCurrentUser(user);
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
-      return { success: true };
+      // Check if response is OK
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Registration response:", data);
+
+      if (data.success) {
+        // Store token and user data
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
+      }
+
+      return data;
     } catch (error) {
+      console.error("Registration error:", error);
       return {
         success: false,
-        message: error.response?.data?.message || "Login failed",
+        message:
+          error.message ||
+          "Registration failed. Please check if the server is running.",
       };
     }
   };
 
-  const getUserProfile = async () => {
+  const login = async (email, password) => {
     try {
-      const token = localStorage.getItem("authToken");
-      const response = await api.get("/user/profile", {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      setUser(response.data);
-      return response.data;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Store token and user data
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
+      }
+
+      return data;
     } catch (error) {
-      console.error("Failed to fetch user profile:", error);
-      throw error;
-    }
-  };
-
-  const register = async (userData) => {
-    try {
-      const response = await authAPI.register(userData);
-      const { token, user } = response.data;
-
-      localStorage.setItem("token", token);
-      setCurrentUser(user);
-
-      return { success: true };
-    } catch (error) {
+      console.error("Login error:", error);
       return {
         success: false,
-        message: error.response?.data?.message || "Registration failed",
+        message:
+          error.message ||
+          "Login failed. Please check if the server is running.",
       };
     }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    setCurrentUser(null);
+    localStorage.removeItem("user");
+    setUser(null);
   };
 
   const value = {
-    currentUser,
-    login,
+    user,
     register,
+    login,
     logout,
     loading,
   };

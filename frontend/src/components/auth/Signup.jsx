@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/authContext";
 import bookforlogin from "../../assets/bookforlogin.jpg";
 import "../../index.css";
@@ -8,7 +8,7 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
-    userType: "reader",
+    role: "user", // Changed from userType to role with default value
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,13 +27,17 @@ export default function Signup() {
     setLoading(true);
     setError("");
 
+    console.log("Submitting form data:", formData); // Debug log
+
     const result = await register(formData);
 
     if (result.success) {
-      // Redirect to dashboard or home page
-      window.location.href = "/dashboard";
+      // Redirect to appropriate dashboard based on role
+      const redirectPath =
+        formData.role === "vendor" ? "/vendor-dashboard" : "/dashboard";
+      window.location.href = redirectPath;
     } else {
-      setError(result.message);
+      setError(result.message || "Registration failed. Please try again.");
     }
 
     setLoading(false);
@@ -136,36 +140,36 @@ export default function Signup() {
                 <div className="flex items-center">
                   <input
                     type="radio"
-                    id="reader"
-                    name="userType"
-                    value="reader"
-                    checked={formData.userType === "reader"}
+                    id="user"
+                    name="role" // Changed from userType to role
+                    value="user"
+                    checked={formData.role === "user"}
                     onChange={handleChange}
                     className="h-4 w-4 text-accent focus:ring-accent"
                   />
                   <label
-                    htmlFor="reader"
+                    htmlFor="user"
                     className="ml-2 block text-sm text-primary"
                   >
-                    Reader
+                    User
                   </label>
                 </div>
 
                 <div className="flex items-center">
                   <input
                     type="radio"
-                    id="seller"
-                    name="userType"
-                    value="seller"
-                    checked={formData.userType === "seller"}
+                    id="vendor"
+                    name="role" // Changed from userType to role
+                    value="vendor"
+                    checked={formData.role === "vendor"}
                     onChange={handleChange}
                     className="h-4 w-4 text-accent focus:ring-accent"
                   />
                   <label
-                    htmlFor="seller"
+                    htmlFor="vendor"
                     className="ml-2 block text-sm text-primary"
                   >
-                    Book Seller
+                    Vendor
                   </label>
                 </div>
               </div>
