@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* styles.css */
+:root {
+  --color-primary: #0b2e33;
+  --color-primary-content: #ffffff;
+  --color-secondary: #93b1b5;
+  --color-secondary-content: #0b2e33;
+  --color-accent: #0b2e33;
+  --color-accent-content: #93b1b5;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+}
+
+.btn-primary:hover {
+  background-color: #0a2529;
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-content);
+}
+
+.btn-secondary:hover {
+  background-color: #7f9a9e;
+}
+
+.btn-accent {
+  background-color: var(--color-accent);
+  color: var(--color-accent-content);
+}
+
+.btn-accent:hover {
+  background-color: #b8e3e9;
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-content);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+  color: var(--color-accent-content);
+}
+
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.border-secondary {
+  border-color: var(--color-secondary);
+}
+
+.border-accent {
+  border-color: var(--color-accent);
+}
+
+.focus-ring:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+}
