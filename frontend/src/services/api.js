@@ -15,7 +15,7 @@ const api = axios.create({
 
 // Add token to requests
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("userToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -27,7 +27,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
+      localStorage.removeItem("userToken");
       localStorage.removeItem("user");
       window.location.href = "/login";
     }
@@ -42,16 +42,35 @@ export const authAPI = {
 };
 
 export const quotesAPI = {
-  createRequest: (bookData) => api.post("/quotes", bookData),
-  getMyRequests: () => api.get("/quotes/my-requests"),
-  getAllRequests: () => api.get("/quotes"),
-  getRequest: (id) => api.get(`/quotes/${id}`),
+  createQuotes: (bookData) => api.post("/api/quotes", bookData),
+  getUserQuotes: () => api.get("/api/quotes/users/my-quotes"), // For users to see quotes on their requests
+  getMyQuotes: () => api.get("/api/quotes/my-quotes"),
+  getAllQuotes: () => api.get("/api/quotes"),
+  getMyQuotesById: (id) => api.get(`/api/quotes/${id}`),
 };
 
 export const responsesAPI = {
-  createResponse: (responseData) => api.post("/responses", responseData),
-  getMyResponses: () => api.get("/responses/my-responses"),
-  acceptResponse: (id) => api.patch(`/responses/${id}/accept`),
+  createResponse: (responseData) => api.post("/api/responses", responseData),
+  getMyResponses: () => api.get("/api/responses/my-responses"),
+  acceptResponse: (id) => api.patch(`/api/responses/${id}/accept`),
+};
+
+export const booksAPI = {
+  getAll: () => api.get("/api/books"),
+  getBook: (id) => api.get(`/api/books/${id}`),
+  createBook: (bookData) => api.post("/api/books", bookData),
+  updateBook: (id, bookData) => api.put(`/api/books/${id}`, bookData),
+  deleteBook: (id) => api.delete(`/api/books/${id}`),
+  searchBook: (searchTerm) => api.get(`/api/books/search?title=${searchTerm}`),
+};
+
+export const requestsAPI = {
+  getAll: () => api.get("/api/requests"),
+  getById: (id) => api.get(`/api/requests/${id}`),
+  create: (requestData) => api.post("/api/requests", requestData),
+  update: (id, requestData) => api.put(`/api/requests/${id}`, requestData),
+  delete: (id) => api.delete(`/api/requests/${id}`),
+  getMyRequests: () => api.get("/api/requests/my-requests"),
 };
 
 export default api;

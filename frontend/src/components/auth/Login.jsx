@@ -31,20 +31,17 @@ export default function Login() {
       const result = await login(formData.email, formData.password);
       console.log("Login result:", result);
 
-      // Handle different response formats
       if (result.user) {
-        // Standard response with user object
-        const redirectPath =
-          result.user.role === "vendor" ? "/vendor-dashboard" : "/dashboard";
-        navigate(redirectPath);
+        // Navigate based on user role
+        if (result.user.role === "vendor") {
+          navigate("/vendor-dashboard");
+        } else {
+          navigate("/user-dashboard");
+        }
       } else if (result.success) {
-        // Response with success flag but no user data
-        // In a real app, you would fetch user data here
+        // Fallback if no user data
         console.warn("Login successful but no user data returned");
-
-        // For demo purposes, navigate to a default page
-        // In production, you would fetch user profile here
-        navigate("/dashboard");
+        navigate("/user-dashboard"); // Default to user dashboard
       } else {
         setError("User data missing. Please contact support.");
       }

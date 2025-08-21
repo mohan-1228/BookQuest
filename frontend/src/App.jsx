@@ -4,8 +4,9 @@ import { AuthProvider } from "./context/authContext";
 import Navbar from "./components/common/Navbar";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
-import Dashboard from "./pages/Dashbaord";
-import protectedRoute from "./components/auth/protectedRoute";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import UserDashboard from "./pages/UserDashbaord";
+import VendorDashboard from "./pages/VendorDashboard";
 import LandingPage from "./pages/LandingPage";
 
 import "./index.css";
@@ -20,7 +21,23 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<LandingPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+
+            <Route
+              path="/user-dashboard"
+              element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendor-dashboard"
+              element={
+                <ProtectedRoute>
+                  <VendorDashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </Router>
