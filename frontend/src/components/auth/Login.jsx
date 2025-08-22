@@ -36,7 +36,7 @@ export default function Login() {
         if (result.user.role === "vendor") {
           navigate("/vendor-dashboard");
         } else {
-          navigate("/user-dashboard");
+          navigate("/user-home");
         }
       } else if (result.success) {
         // Fallback if no user data
