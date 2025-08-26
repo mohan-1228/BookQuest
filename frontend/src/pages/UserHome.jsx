@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import book1 from "../assets/book1.jpg";
-import book2 from "../assets/book1.jpg";
-import book3 from "../assets/book1.jpg";
-import book4 from "../assets/book1.jpg";
-import book5 from "../assets/book1.jpg";
-import book6 from "../assets/book1.jpg";
-import book7 from "../assets/book1.jpg";
-import book8 from "../assets/book1.jpg";
-import book9 from "../assets/book1.jpg";
-import book0 from "../assets/book1.jpg";
+import book2 from "../assets/book2.jpg";
+import book3 from "../assets/book3.jpg";
+import book4 from "../assets/book4.jpg";
+import book5 from "../assets/book5.jpg";
+import book6 from "../assets/book6.jpg";
+import book7 from "../assets/book7.jpg";
+import book8 from "../assets/book8.jpg";
+import book9 from "../assets/book9.jpg";
+import book0 from "../assets/book0.jpg";
 
 import {
   Search,
@@ -85,13 +85,13 @@ const UserHome = () => {
                 to=""
                 className="bg-[#93B1B5] text-[#0B2E33] hover:bg-[#B8E3E9] hover:scale-105 rounded-xl px-8 py-4 text-lg font-semibold transition-all text-center"
               >
-                Start Searching
+                Find Books
               </Link>
               <Link
-                to=""
+                to="/book-request"
                 className="border-2 border-[#93B1B5] text-white hover:bg-[#93B1B5] hover:text-[#0B2E33] hover:scale-105 rounded-xl px-8 py-4 text-lg font-semibold transition-all text-center"
               >
-                Learn More
+                Submit Request
               </Link>
             </div>
           </div>
@@ -358,7 +358,7 @@ const UserHome = () => {
               Find Books
             </Link>
             <Link
-              to=""
+              to="/book-request"
               className="border-2 border-[#93B1B5] text-white hover:bg-[#93B1B5] hover:text-[#0B2E33] hover:scale-105 rounded-xl px-12 py-4 text-lg font-semibold transition-all"
             >
               Request Books

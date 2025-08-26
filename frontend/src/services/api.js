@@ -10,6 +10,7 @@ const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    timeout: 10000,
   },
 });
 
@@ -71,6 +72,56 @@ export const requestsAPI = {
   update: (id, requestData) => api.put(`/api/requests/${id}`, requestData),
   delete: (id) => api.delete(`/api/requests/${id}`),
   getMyRequests: () => api.get("/api/requests/my-requests"),
+};
+
+export const isbnAPI = {
+  // Search books by query (title, author, or ISBN)
+  searchBooks: async (query, page = 1, pageSize = 5) => {
+    try {
+      const response = await api.get(
+        `/api/isbn/books/${encodeURIComponent(
+          query
+        )}?page=${page}&pageSize=${pageSize}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to search books"
+      );
+    }
+  },
+
+  // Get book details by ISBN
+  getBookByISBN: async (isbn) => {
+    try {
+      const response = await api.get(`/api/isbn/book/${isbn}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch book details"
+      );
+    }
+  },
+
+  // Get multiple books by ISBNs
+  getBooksByISBNs: async (isbns) => {
+    try {
+      const response = await api.post("/api/isbn/books/bulk", { isbns });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to fetch books");
+    }
+  },
+
+  // Health check
+  healthCheck: async () => {
+    try {
+      const response = await api.get("/api/isbn/health");
+      return response.data;
+    } catch (error) {
+      throw new Error("ISBN API health check failed");
+    }
+  },
 };
 
 export default api;

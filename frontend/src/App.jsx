@@ -11,6 +11,8 @@ import LandingPage from "./pages/LandingPage";
 import Footer from "./components/common/Footer";
 import "./index.css";
 import UserHome from "./pages/UserHome";
+import BookRequestForm from "./pages/RequestForm";
+import VendorRequests from "./pages/Requests";
 
 function App() {
   return (
@@ -23,7 +25,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/" element={<LandingPage />} />
-              <Route path="/user-home" element={<UserHome />} />
+              {/* <Route path="/user-home" element={<UserHome />} /> */}
+              <Route path="/book-request" element={<BookRequestForm />} />
               <Route
                 path="/user-dashboard"
                 element={
@@ -33,10 +36,26 @@ function App() {
                 }
               />
               <Route
+                path="/user-home"
+                element={
+                  <ProtectedRoute>
+                    <UserHome />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/vendor-dashboard"
                 element={
                   <ProtectedRoute>
                     <VendorDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/requests"
+                element={
+                  <ProtectedRoute>
+                    <VendorRequests />
                   </ProtectedRoute>
                 }
               />

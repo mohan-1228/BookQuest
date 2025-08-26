@@ -88,7 +88,7 @@ const LandingNavbar = () => {
                   }
                   className="text-white hover:text-[#B8E3E9] flex items-center gap-1"
                 >
-                  <LayoutDashboard className="h-4 w-4" />
+                  <LayoutDashboard className="inline h-4 w-4 mr-1.5" />
                   Dashboard
                 </Link>
                 {currentUser.role === "user" && (
@@ -96,7 +96,7 @@ const LandingNavbar = () => {
                     to="/my-requests"
                     className="text-white hover:text-[#B8E3E9] flex items-center gap-1"
                   >
-                    <ShoppingCart className="h-4 w-4" />
+                    <ShoppingCart className="inline h-4 w-4 mr-1.5" />
                     My Requests
                   </Link>
                 )}
@@ -105,7 +105,7 @@ const LandingNavbar = () => {
                     to="/my-quotes"
                     className="text-white hover:text-[#B8E3E9] flex items-center gap-1"
                   >
-                    <Package className="h-4 w-4" />
+                    <Package className="inline h-4 w-4 mr-1.5 " />
                     My Quotes
                   </Link>
                 )}
@@ -180,7 +180,7 @@ const LandingNavbar = () => {
                           className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                           onClick={() => setIsProfileOpen(false)}
                         >
-                          <Package className="h-4 w-4" />
+                          <Package className="inline h-4 w-4 mr-1.5" />
                           My Quotes
                         </Link>
                       )}
