@@ -6,7 +6,7 @@ import authRoutes from "./routes/auth.js";
 import requestRoutes from "./routes/request.js";
 import quoteRoutes from "./routes/quotes.js";
 import isbnRoutes from "./routes/isbn.js";
-import bookRoutes from "./routes/books.js";
+
 dotenv.config();
 
 const app = express();
@@ -20,7 +20,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/quotes", quoteRoutes);
 app.use("/api/isbn", isbnRoutes);
-app.use("/api/books", bookRoutes);
 
 // Error handling middleware (optional)
 app.use((err, req, res, next) => {
