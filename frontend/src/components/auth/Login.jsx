@@ -29,12 +29,11 @@ export default function Login() {
 
     try {
       const result = await login(formData.email, formData.password);
-      console.log("Login result:", result);
 
       if (result.user) {
         // Navigate based on user role
         if (result.user.role === "vendor") {
-          navigate("/vendor-dashboard");
+          navigate("/vendor-home");
         } else {
           navigate("/user-home");
         }

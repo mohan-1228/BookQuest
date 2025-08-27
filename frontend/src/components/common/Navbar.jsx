@@ -43,13 +43,21 @@ const LandingNavbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link
-            to="/"
+            to={
+              currentUser?.role === "vendor"
+                ? "/vendor-home"
+                : currentUser
+                ? "/user-home"
+                : "/"
+            }
             onClick={(e) => {
-              if (currentUser) e.preventDefault(); // stop navigation
+              if (currentUser) {
+                // Allow default navigation (to vendor-home or user-home)
+                return;
+              }
+              // If no user is logged in, navigate to home page (/)
             }}
-            className={`flex items-center space-x-2 ${
-              currentUser ? "cursor-default" : "cursor-pointer"
-            }`}
+            className="flex items-center space-x-2 cursor-pointer"
           >
             <BookOpen className="h-8 w-8 text-white" />
             <span className="text-xl font-bold text-white">BookQuest</span>
@@ -100,6 +108,17 @@ const LandingNavbar = () => {
                     My Requests
                   </Link>
                 )}
+
+                {currentUser.role === "user" && (
+                  <Link
+                    to="/user-quotes"
+                    className="text-white hover:text-[#B8E3E9] flex items-center gap-1"
+                  >
+                    <Package className="inline h-4 w-4 mr-1.5 " />
+                    Available Quotes
+                  </Link>
+                )}
+
                 {currentUser.role === "vendor" && (
                   <Link
                     to="/my-quotes"
@@ -107,6 +126,16 @@ const LandingNavbar = () => {
                   >
                     <Package className="inline h-4 w-4 mr-1.5 " />
                     My Quotes
+                  </Link>
+                )}
+
+                {currentUser.role === "vendor" && (
+                  <Link
+                    to="/requests"
+                    className="text-white hover:text-[#B8E3E9] flex items-center gap-1"
+                  >
+                    <ShoppingCart className="inline h-4 w-4 mr-1.5 " />
+                    All Requests
                   </Link>
                 )}
               </>
@@ -182,6 +211,17 @@ const LandingNavbar = () => {
                         >
                           <Package className="inline h-4 w-4 mr-1.5" />
                           My Quotes
+                        </Link>
+                      )}
+
+                      {currentUser.role === "vendor" && (
+                        <Link
+                          to="/requests"
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <Package className="inline h-4 w-4 mr-1.5" />
+                          All Requests
                         </Link>
                       )}
 
