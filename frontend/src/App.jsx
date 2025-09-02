@@ -15,6 +15,8 @@ import BookRequestForm from "./pages/RequestForm";
 import VendorRequests from "./pages/Requests";
 import UserRequestsPage from "./pages/UserRequests";
 import VendorHome from "./pages/VendorHome";
+import EditRequest from "./pages/EditRequest";
+import SubmitQuote from "./pages/QuoteSubmission";
 
 function App() {
   return (
@@ -54,6 +56,14 @@ function App() {
                 }
               />
               <Route
+                path="/edit-request/:requestId"
+                element={
+                  <ProtectedRoute>
+                    <EditRequest />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/vendor-dashboard"
                 element={
                   <ProtectedRoute>
@@ -75,6 +85,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <VendorRequests />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/requests/:id/submit-quote"
+                element={
+                  <ProtectedRoute>
+                    <SubmitQuote />
                   </ProtectedRoute>
                 }
               />

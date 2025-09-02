@@ -6,7 +6,7 @@ import authRoutes from "./routes/auth.js";
 import requestRoutes from "./routes/request.js";
 import quoteRoutes from "./routes/quotes.js";
 import isbnRoutes from "./routes/isbn.js";
-import bookRoutes from "./routes/books.js";
+
 dotenv.config();
 
 const app = express();
@@ -19,8 +19,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/quotes", quoteRoutes);
-app.use("/api/isbn", isbnRoutes);
-app.use("/api/books", bookRoutes);
+app.use("/api/books", isbnRoutes);
 
 // Error handling middleware (optional)
 app.use((err, req, res, next) => {
@@ -42,20 +41,3 @@ mongoose
   .catch((error) => {
     console.error("MongoDB connection error:", error.message);
   });
-
-// // TEMPORARY routes to prevent 404 errors
-// app.get("/api/books", (req, res) => {
-//   res.json({ success: true, data: [] });
-// });
-
-// app.get("/api/requests/my-requests", (req, res) => {
-//   res.json({ success: true, data: [] });
-// });
-
-// app.get("/api/requests", (req, res) => {
-//   res.json({ success: true, data: [] });
-// });
-
-// app.get("/api/quotes/my-quotes", (req, res) => {
-//   res.json({ success: true, data: [] });
-// });

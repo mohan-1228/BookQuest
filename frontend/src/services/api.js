@@ -8,20 +8,33 @@ export const API_BASE_URL =
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 10000, // ✅ moved timeout here
   headers: {
     "Content-Type": "application/json",
-    timeout: 10000,
   },
 });
 
-// Add token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("userToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+// Create separate axios instance for ISBNdb API calls (without auth interceptor)
+const isbnApi = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
+
+// Add request interceptor to include auth token for regular API calls only
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Handle auth errors
 api.interceptors.response.use(
@@ -43,7 +56,8 @@ export const authAPI = {
 };
 
 export const quotesAPI = {
-  createQuotes: (bookData) => api.post("/api/quotes", bookData),
+  createQuotes: (requestId, quoteData) =>
+    api.post(`api/requests/${requestId}/quotes`, quoteData),
   getUserQuotes: () => api.get("/api/quotes/users/my-quotes"), // For users to see quotes on their requests
   getMyQuotes: () => api.get("/api/quotes/my-quotes"),
   getAllQuotes: () => api.get("/api/quotes"),
@@ -75,53 +89,9 @@ export const requestsAPI = {
 };
 
 export const isbnAPI = {
-  // Search books by query (title, author, or ISBN)
-  searchBooks: async (query, page = 1, pageSize = 5) => {
-    try {
-      const response = await api.get(
-        `/api/isbn/books/${encodeURIComponent(
-          query
-        )}?page=${page}&pageSize=${pageSize}`
-      );
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Failed to search books"
-      );
-    }
-  },
-
-  // Get book details by ISBN
-  getBookByISBN: async (isbn) => {
-    try {
-      const response = await api.get(`/api/isbn/book/${isbn}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Failed to fetch book details"
-      );
-    }
-  },
-
-  // Get multiple books by ISBNs
-  getBooksByISBNs: async (isbns) => {
-    try {
-      const response = await api.post("/api/isbn/books/bulk", { isbns });
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response?.data?.message || "Failed to fetch books");
-    }
-  },
-
-  // Health check
-  healthCheck: async () => {
-    try {
-      const response = await api.get("/api/isbn/health");
-      return response.data;
-    } catch (error) {
-      throw new Error("ISBN API health check failed");
-    }
-  },
+  searchBooks: (query) =>
+    api.get(`api/books/search?q=${encodeURIComponent(query)}`),
+  getBookByISBN: (isbn) => api.get(`api/books/isbn/${isbn}`),
 };
 
 export default api;
