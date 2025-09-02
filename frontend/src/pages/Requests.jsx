@@ -41,7 +41,7 @@ const VendorRequests = () => {
         // Extract requests from the API response
         const requestsData = response.data?.data || [];
 
-        console.log("Processed requests data:", requestsData);
+        // console.log("Processed requests data:", requestsData);
 
         setRequests(requestsData);
         setFilteredRequests(requestsData);
@@ -402,7 +402,7 @@ const VendorRequests = () => {
                             <Eye className="h-4 w-4 mr-1" /> View
                           </button>
                           <Link
-                            to={`/request/${request._id}/quote`}
+                            to={`/requests/${request._id}/submit-quote`}
                             className="bg-[#0B2E33] text-white hover:bg-[#0a2529] py-1 px-3 rounded-lg flex items-center"
                           >
                             <DollarSign className="h-4 w-4 mr-1" /> Quote
@@ -509,7 +509,7 @@ const VendorRequests = () => {
                       <Eye className="h-4 w-4 mr-1" /> View
                     </button>
                     <Link
-                      to={`/request/${request._id}/quote`}
+                      to={`/requests/${request._id}/submit-quote`}
                       className="bg-[#0B2E33] text-white hover:bg-[#0a2529] py-1 px-3 rounded-lg text-sm flex items-center"
                     >
                       <DollarSign className="h-4 w-4 mr-1" /> Quote
@@ -681,7 +681,7 @@ const VendorRequests = () => {
                   Close
                 </button>
                 <Link
-                  to={`/request/${selectedRequest._id}/quote`}
+                  to={`/requests/${selectedRequest._id}/submit-quote`}
                   className="px-4 py-2 bg-[#0B2E33] text-white rounded-md text-sm font-medium hover:bg-[#0a2529] flex items-center"
                 >
                   <DollarSign className="h-4 w-4 mr-1" /> Quote This Request

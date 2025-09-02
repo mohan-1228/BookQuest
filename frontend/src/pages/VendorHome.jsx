@@ -92,7 +92,7 @@ const VendorHome = () => {
                 Browse Requests
               </Link>
               <Link
-                to="/dashboard"
+                to="/vendor-dashboard"
                 className="border-2 border-[#93B1B5] text-white hover:bg-[#93B1B5] hover:text-[#0B2E33] hover:scale-105 rounded-xl px-8 py-4 text-lg font-semibold transition-all text-center"
               >
                 View Dashboard
