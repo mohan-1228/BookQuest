@@ -77,6 +77,10 @@ const quoteSchema = new mongoose.Schema({
     type: Date,
   },
 
+  quoteValidUntil: {
+    type: Date,
+  },
+
   vendorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

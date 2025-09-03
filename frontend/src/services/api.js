@@ -57,7 +57,7 @@ export const authAPI = {
 
 export const quotesAPI = {
   createQuotes: (requestId, quoteData) =>
-    api.post(`api/requests/${requestId}/quotes`, quoteData),
+    api.post(`/api/requests/${requestId}/quotes`, quoteData),
   getUserQuotes: () => api.get("/api/quotes/users/my-quotes"), // For users to see quotes on their requests
   getMyQuotes: () => api.get("/api/quotes/my-quotes"),
   getAllQuotes: () => api.get("/api/quotes"),

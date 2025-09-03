@@ -290,7 +290,24 @@ router.post("/:requestId/quotes", auth, async (req, res) => {
       });
     }
 
-    const { books, notes, estimatedDelivery } = req.body;
+    const { vendorDetails, books, notes, estimatedDelivery, quoteValidUntil } =
+      req.body;
+
+    // Validate vendor details
+    if (
+      !vendorDetails ||
+      !vendorDetails.contactPerson ||
+      !vendorDetails.businessName ||
+      !vendorDetails.email ||
+      !vendorDetails.phone ||
+      !vendorDetails.address
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "All vendor details are required (contactPerson, businessName, email, phone, address)",
+      });
+    }
 
     // Validate books array
     if (!books || !Array.isArray(books) || books.length === 0) {
@@ -317,6 +334,15 @@ router.post("/:requestId/quotes", auth, async (req, res) => {
     );
 
     const quote = new Quote({
+      vendorDetails: {
+        contactPerson: vendorDetails.contactPerson,
+        businessName: vendorDetails.businessName,
+        email: vendorDetails.email,
+        phone: vendorDetails.phone,
+        address: vendorDetails.address,
+        taxId: vendorDetails.taxId || "",
+        paymentTerms: vendorDetails.paymentTerms || "Net 30",
+      },
       books: books.map((book) => ({
         bookId: book.bookId,
         title: book.title,
@@ -328,8 +354,9 @@ router.post("/:requestId/quotes", auth, async (req, res) => {
         totalPrice: book.totalPrice,
       })),
       totalPrice,
-      notes,
-      estimatedDelivery,
+      notes: notes || "",
+      estimatedDelivery: estimatedDelivery || null,
+      quoteValidUntil: quoteValidUntil || null,
       vendorId: req.user.id,
       requestId: req.params.requestId,
     });
@@ -346,6 +373,17 @@ router.post("/:requestId/quotes", auth, async (req, res) => {
     });
   } catch (error) {
     console.error("Quote submission error:", error);
+
+    // Handle mongoose validation errors
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: errors,
+      });
+    }
+
     res.status(400).json({ success: false, message: error.message });
   }
 });

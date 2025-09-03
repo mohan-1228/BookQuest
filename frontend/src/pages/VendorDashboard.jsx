@@ -17,6 +17,7 @@ import {
   User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import RequestDetailModal from "../components/common/RequestDetailModal";
 
 const VendorDashboard = () => {
   const { currentUser } = useAuth();
@@ -35,6 +36,18 @@ const VendorDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewRequest = (request) => {
+    setSelectedRequest(request);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedRequest(null);
+  };
 
   // Helper function to get nested properties safely
   const getNestedValue = (obj, path, defaultValue = "Unknown") => {
@@ -212,14 +225,6 @@ const VendorDashboard = () => {
         {/* Header */}
         <header className="bg-white shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            {/* <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Vendor Dashboard
-            </h1>
-            <p className="text-sm text-gray-500">
-              Manage your quotes and requests
-            </p>
-          </div> */}
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleRefresh}
@@ -404,16 +409,6 @@ const VendorDashboard = () => {
                   <Package className="h-5 w-5" />
                   Recent Open Requests
                 </h3>
-                {/* <div className="flex items-center bg-gray-100 rounded-lg px-3 py-1">
-                <Search className="h-4 w-4 text-gray-500 mr-2" />
-                <input
-                  type="text"
-                  placeholder="Search requests..."
-                  className="bg-transparent text-sm outline-none w-32"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div> */}
               </div>
               <div className="space-y-4">
                 {filteredRequests.length > 0 ? (
@@ -436,14 +431,15 @@ const VendorDashboard = () => {
                         <div className="mt-2 flex justify-between items-center">
                           <StatusBadge status={request.status} />
                           <div className="flex space-x-2">
-                            <Link
-                              to={`/request/${request._id}`}
-                              className="text-sm text-[#0B2E33] hover:underline flex items-center"
+                            <button
+                              onClick={() => handleViewRequest(request)}
+                              className="text-[#0B2E33] hover:text-[#0a2529] flex items-center"
                             >
-                              <Eye className="h-3 w-3 mr-1" /> View
-                            </Link>
+                              <Eye className="h-4 w-4 mr-1" /> View
+                            </button>
+
                             <Link
-                              to={`/request/${request._id}/quote`}
+                              to={`/requests/${request._id}/submit-quote`}
                               className="text-sm bg-[#0B2E33] text-white py-1 px-3 rounded-md hover:bg-[#0a2529] flex items-center"
                             >
                               <DollarSign className="h-3 w-3 mr-1" /> Quote
@@ -480,28 +476,6 @@ const VendorDashboard = () => {
                   <DollarSign className="h-5 w-5" />
                   My Recent Quotes
                 </h3>
-                <div className="flex items-center space-x-2">
-                  {/* <div className="flex items-center bg-gray-100 rounded-lg px-3 py-1">
-                  <Search className="h-4 w-4 text-gray-500 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="Search quotes..."
-                    className="bg-transparent text-sm outline-none w-32"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div> */}
-                  {/* <select
-                  className="bg-gray-100 text-sm rounded-lg px-2 py-1 outline-none"
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  <option value="all">All</option>
-                  <option value="pending">Pending</option>
-                  <option value="accepted">Accepted</option>
-                  <option value="rejected">Rejected</option>
-                </select> */}
-                </div>
               </div>
               <div className="space-y-4">
                 {filteredQuotes.length > 0 ? (
@@ -513,26 +487,50 @@ const VendorDashboard = () => {
                       <div className="flex justify-between items-start">
                         <div>
                           <h4 className="font-medium text-black">
-                            {getNestedValue(
-                              quote,
-                              "requestId.title",
-                              "Unknown Request"
-                            )}
+                            {/* Show first book title or request reference */}
+                            {quote.books?.[0]?.title ||
+                              getNestedValue(
+                                quote,
+                                "requestId.title",
+                                "Unknown Request"
+                              ) ||
+                              `Quote #${quote._id.substring(0, 8)}`}
                           </h4>
-                          <p className="text-sm text-gray-500">
-                            Price: ${quote.price}
+                          <p className="text-sm text-gray-700">
+                            {/* Use totalPrice instead of price */}
+                            Total: ${quote.totalPrice?.toFixed(2) || "0.00"}
+                          </p>
+                          <p className="text-sm text-gray-700">
+                            {/* Show number of books */}
+                            {quote.books?.length || 0} book
+                            {quote.books?.length !== 1 ? "s" : ""}
                           </p>
                         </div>
                         <StatusBadge status={quote.status} />
                       </div>
-                      <p className="text-sm text-gray-500 mt-2">
+
+                      {/* Show vendor business name if available */}
+                      {quote.vendorDetails?.businessName && (
+                        <p className="text-sm text-gray-700 mt-1">
+                          From: {quote.vendorDetails.businessName}
+                        </p>
+                      )}
+
+                      <p className="text-sm text-gray-700 mt-2">
                         Notes: {quote.notes || "N/A"}
                       </p>
-                      <div className="mt-2 text-xs text-gray-500">
+
+                      {/* Show quote validity if available */}
+                      {quote.quoteValidUntil && (
+                        <p className="text-xs text-gray-700 mt-1">
+                          Valid until:{" "}
+                          {new Date(quote.quoteValidUntil).toLocaleDateString()}
+                        </p>
+                      )}
+
+                      <div className="mt-2 text-xs text-gray-700">
                         Submitted:{" "}
-                        {new Date(
-                          quote.createdAt || quote.submittedAt
-                        ).toLocaleDateString()}
+                        {new Date(quote.createdAt).toLocaleDateString()}
                       </div>
                     </div>
                   ))
@@ -558,6 +556,13 @@ const VendorDashboard = () => {
           </div>
         </main>
       </div>
+
+      {/* Request Detail Modal */}
+      <RequestDetailModal
+        request={selectedRequest}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
     </>
   );
 };

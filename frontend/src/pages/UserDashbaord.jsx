@@ -17,6 +17,7 @@ import {
   User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import UserRequestModal from "../components/common/UserRequestModal";
 
 const UserDashboard = () => {
   const { currentUser } = useAuth();
@@ -36,6 +37,17 @@ const UserDashboard = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [refreshing, setRefreshing] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewRequest = (request) => {
+    setSelectedRequest(request);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedRequest(null);
+  };
 
   // Helper function to get nested properties safely
   const getNestedValue = (obj, path, defaultValue = "Unknown") => {
@@ -394,28 +406,6 @@ const UserDashboard = () => {
                   <Package className="h-5 w-5" />
                   My Recent Requests
                 </h3>
-                {/* <div className="flex items-center space-x-2">
-                  <div className="flex items-center bg-gray-800 rounded-lg px-3 py-1">
-                    <Search className="h-4 w-4 text-gray-500 mr-2" />
-                    <input
-                      type="text"
-                      placeholder="Search requests..."
-                      className="bg-transparent text-sm outline-none w-32"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  <select
-                    className="bg-gray-800 text-sm rounded-lg px-2 py-1 outline-none"
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                  >
-                    <option value="all">All</option>
-                    <option value="open">Open</option>
-                    <option value="fulfilled">Fulfilled</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div> */}
               </div>
               <div className="space-y-4">
                 {filteredRequests.length > 0 ? (
@@ -438,12 +428,12 @@ const UserDashboard = () => {
                         <div className="mt-2 flex justify-between items-center">
                           <StatusBadge status={request.status} />
                           <div className="flex space-x-2">
-                            <Link
-                              to={`/request/${request._id}`}
+                            <button
+                              onClick={() => handleViewRequest(request)}
                               className="text-sm text-[#0B2E33] hover:underline flex items-center"
                             >
                               <Eye className="h-3 w-3 mr-1" /> View
-                            </Link>
+                            </button>
                             <Link
                               to={`/request/${request._id}/quotes`}
                               className="text-sm bg-[#0B2E33] text-white py-1 px-3 rounded-md hover:bg-[#0a2529] flex items-center"
@@ -482,83 +472,146 @@ const UserDashboard = () => {
                   <DollarSign className="h-5 w-5" />
                   Recent Quotes Received
                 </h3>
-                {/* <div className="flex items-center space-x-2">
-                  <div className="flex items-center bg-gray-800 rounded-lg px-3 py-1">
-                    <Search className="h-4 w-4 text-gray-500 mr-2" />
-                    <input
-                      type="text"
-                      placeholder="Search quotes..."
-                      className="bg-transparent text-sm outline-none w-32"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  <select
-                    className="bg-gray-800 text-sm rounded-lg px-2 py-1 outline-none"
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                  >
-                    <option value="all">All</option>
-                    <option value="pending">Pending</option>
-                    <option value="accepted">Accepted</option>
-                    <option value="rejected">Rejected</option>
-                  </select>
-                </div> */}
               </div>
               <div className="space-y-4">
                 {filteredQuotes.length > 0 ? (
-                  filteredQuotes.slice(0, 3).map((quote) => (
-                    <div
-                      key={quote._id}
-                      className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-medium text-black">
-                            {getNestedValue(
-                              quote,
-                              "requestId.title",
-                              "Unknown Request"
+                  filteredQuotes.slice(0, 3).map((quote) => {
+                    // Get the first book from the quote
+                    const firstBook = quote.books?.[0] || {};
+                    const totalBooks = quote.books?.length || 0;
+                    const vendorEmail = getNestedValue(
+                      quote,
+                      "vendorId.email",
+                      getNestedValue(
+                        quote,
+                        "vendorDetails.email",
+                        "No email available"
+                      )
+                    );
+                    const vendorName = getNestedValue(
+                      quote,
+                      "vendorId.businessName",
+                      getNestedValue(
+                        quote,
+                        "vendorDetails.businessName",
+                        "Unknown Vendor"
+                      )
+                    );
+
+                    return (
+                      <div
+                        key={quote._id}
+                        className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-black">
+                              {firstBook.title ||
+                                getNestedValue(
+                                  quote,
+                                  "requestId.title",
+                                  "Unknown Request"
+                                )}
+                            </h4>
+
+                            {/* Vendor Information */}
+                            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                              <div>
+                                <p className="text-gray-900">From:</p>
+                                <p className="text-gray-900 font-medium">
+                                  {vendorName}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-gray-900">Email:</p>
+                                <p className="text-gray-900">{vendorEmail}</p>
+                              </div>
+                            </div>
+
+                            {/* Quote Summary */}
+                            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                              <div>
+                                <p className="text-gray-900">Total Books:</p>
+                                <p className="text-gray-900 font-medium">
+                                  {totalBooks}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-gray-900">
+                                  Total Quote Value:
+                                </p>
+                                <p className="text-gray-900 font-medium">
+                                  $
+                                  {(
+                                    quote.totalPrice ||
+                                    quote.price ||
+                                    0
+                                  ).toFixed(2)}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Dates Information */}
+                            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                              <div>
+                                <p className="text-gray-900">Submitted:</p>
+                                <p className="text-gray-900">
+                                  {new Date(
+                                    quote.createdAt ||
+                                      quote.submittedAt ||
+                                      Date.now()
+                                  ).toLocaleDateString()}
+                                </p>
+                              </div>
+                              {quote.quoteValidUntil && (
+                                <div>
+                                  <p className="text-gray-900">Valid Until:</p>
+                                  <p className="text-gray-900">
+                                    {new Date(
+                                      quote.quoteValidUntil
+                                    ).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Notes */}
+                            {quote.notes && (
+                              <div className="mt-2">
+                                <p className="text-gray-900 text-sm">Notes:</p>
+                                <p className="text-gray-900 text-sm">
+                                  {quote.notes}
+                                </p>
+                              </div>
                             )}
-                          </h4>
-                          <p className="text-sm text-gray-500">
-                            From:{" "}
-                            {getNestedValue(
-                              quote,
-                              "vendorId.businessName",
-                              "Unknown Vendor"
-                            )}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Price: ${quote.price}
-                          </p>
+                          </div>
+
+                          {/* Status Badge */}
+                          <div className="ml-4">
+                            <StatusBadge status={quote.status} />
+                          </div>
                         </div>
-                        <StatusBadge status={quote.status} />
+
+                        {/* Action Buttons */}
+                        <div className="mt-3 pt-3 border-t flex space-x-2">
+                          <Link
+                            to={`/quote/${quote._id}`}
+                            className="text-sm text-[#0B2E33] hover:underline flex items-center"
+                          >
+                            <Eye className="h-3 w-3 mr-1" /> View Details
+                          </Link>
+                          {quote.status === "pending" && (
+                            <Link
+                              to={`/quote/${quote._id}/respond`}
+                              className="text-sm bg-[#0B2E33] text-white py-1 px-3 rounded-md hover:bg-[#0a2529] flex items-center"
+                            >
+                              <DollarSign className="h-3 w-3 mr-1" /> Respond
+                            </Link>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-500 mt-2">
-                        Notes: {quote.notes || "N/A"}
-                      </p>
-                      <div className="mt-2 text-xs text-gray-500">
-                        Submitted:{" "}
-                        {new Date(
-                          quote.createdAt || quote.submittedAt
-                        ).toLocaleDateString()}
-                      </div>
-                      <div className="mt-2 flex space-x-2">
-                        <Link
-                          to={`/quote/${quote._id}`}
-                          className="text-sm text-[#0B2E33] hover:underline flex items-center"
-                        >
-                          <Eye className="h-3 w-3 mr-1" /> View Details
-                        </Link>
-                        {quote.status === "pending" && (
-                          <button className="text-sm bg-[#0B2E33] text-white py-1 px-3 rounded-md hover:bg-[#0a2529] flex items-center">
-                            <DollarSign className="h-3 w-3 mr-1" /> Respond
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <p className="text-gray-900 text-center py-8">
                     {searchTerm || filterStatus !== "all"
@@ -581,6 +634,13 @@ const UserDashboard = () => {
           </div>
         </main>
       </div>
+
+      {/* Request Detail Modal */}
+      <UserRequestModal
+        request={selectedRequest}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
     </>
   );
 };

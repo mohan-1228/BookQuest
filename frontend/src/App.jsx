@@ -4,9 +4,9 @@ import { AuthProvider } from "./context/authContext";
 import Navbar from "./components/common/Navbar";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ProtectedRoute from "./components/auth/protectedRoute";
 import UserDashboard from "./pages/UserDashbaord";
-import VendorDashboard from "./pages/vendorDashboard";
+import VendorDashboard from "./pages/VendorDashboard";
 import LandingPage from "./pages/LandingPage";
 import Footer from "./components/common/Footer";
 import "./index.css";
@@ -17,6 +17,7 @@ import UserRequestsPage from "./pages/UserRequests";
 import VendorHome from "./pages/VendorHome";
 import EditRequest from "./pages/EditRequest";
 import SubmitQuote from "./pages/QuoteSubmission";
+import AvailableQuotes from "./pages/AvailableUserQuotes";
 
 function App() {
   return (
@@ -60,6 +61,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <EditRequest />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/available-quotes"
+                element={
+                  <ProtectedRoute>
+                    <AvailableQuotes />
                   </ProtectedRoute>
                 }
               />

@@ -111,7 +111,7 @@ const LandingNavbar = () => {
 
                 {currentUser.role === "user" && (
                   <Link
-                    to="/user-quotes"
+                    to="/available-quotes"
                     className="text-white hover:text-[#B8E3E9] flex items-center gap-1"
                   >
                     <Package className="inline h-4 w-4 mr-1.5 " />
