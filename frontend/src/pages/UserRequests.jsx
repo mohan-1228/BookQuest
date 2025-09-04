@@ -469,7 +469,7 @@ const UserRequestsPage = () => {
 
                       <div>
                         <Link
-                          to={`/request/${selectedRequest._id}/quotes`}
+                          to={`/available-quotes`}
                           className="bg-[#0B2E33] text-white py-2 px-4 rounded-lg flex items-center justify-center hover:bg-[#0a2529] transition-colors"
                         >
                           <DollarSign className="h-4 w-4 mr-1" />

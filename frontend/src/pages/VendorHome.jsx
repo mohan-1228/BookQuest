@@ -74,8 +74,10 @@ const VendorHome = () => {
 
         {/* Hero Text */}
         <div className="container mx-auto relative z-10">
-          <div className="max-w-2xl">
+          <div className="max-w-5xl">
             <h1 className="hero-title text-5xl lg:text-7xl font-black text-white uppercase leading-none mb-6">
+              Welcome! Vendor
+              <br />
               Connect with Readers
               <br />
               Grow Your Business

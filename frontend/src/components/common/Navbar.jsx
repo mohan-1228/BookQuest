@@ -38,7 +38,7 @@ const LandingNavbar = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-gradient-to-r from-[#0B2E33] to-[#93B1B5] shadow-lg">
+    <nav className="fixed top-0 w-full z-50 bg-gradient-to-r from-[#0B2E33] to-[#014c56] shadow-lg">
       <div className="container mx-auto px-5 lg:px-10">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -64,10 +64,10 @@ const LandingNavbar = () => {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8 font-semibold">
             {!currentUser ? (
               <>
-                <a href="#features" className="text-white hover:text-[#B8E3E9]">
+                <a href="#features" className="text-white hover:text-[#49dff3]">
                   Features
                 </a>
                 <a
@@ -179,6 +179,19 @@ const LandingNavbar = () => {
 
                   {isProfileOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                      <Link
+                        to={
+                          currentUser.role === "vendor"
+                            ? "/profile"
+                            : "/profile"
+                        }
+                        className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        <User className=" inline h-4 w-4 mr-1.5" />
+                        Profile
+                      </Link>
+
                       <Link
                         to={
                           currentUser.role === "vendor"

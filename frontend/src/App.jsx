@@ -18,6 +18,7 @@ import VendorHome from "./pages/VendorHome";
 import EditRequest from "./pages/EditRequest";
 import SubmitQuote from "./pages/QuoteSubmission";
 import AvailableQuotes from "./pages/AvailableUserQuotes";
+import ProfilePage from "./pages/Profile";
 
 function App() {
   return (
@@ -37,6 +38,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <UserRequestsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
                   </ProtectedRoute>
                 }
               />

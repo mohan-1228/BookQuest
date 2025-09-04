@@ -5,6 +5,7 @@ import {
   Eye,
   DollarSign,
   CheckCircle,
+  Contact,
   XCircle,
   Package,
   BookOpen,
@@ -17,6 +18,7 @@ import {
   Search,
   AlertCircle,
   RefreshCw,
+  Store,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -58,6 +60,7 @@ const AvailableQuotes = () => {
 
       const response = await quotesAPI.getUserQuotes();
       const quotesData = response.data?.data || response.data || [];
+      //   console.log("Quotes data:", quotesData);
 
       // Sort quotes by creation date (newest first)
       const sortedQuotes = quotesData.sort(
@@ -195,7 +198,7 @@ const AvailableQuotes = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#0B2E33] to-[#1a4a52]">
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -266,8 +269,13 @@ const AvailableQuotes = () => {
             filteredQuotes.map((quote) => {
               const vendorName = getNestedValue(
                 quote,
-                "vendorId.businessName",
+                "vendorDetails.businessName",
                 "Unknown Vendor"
+              );
+              const contactPerson = getNestedValue(
+                quote,
+                "vendorDetails.contactPerson",
+                "No contact person"
               );
               const vendorEmail = getNestedValue(
                 quote,
@@ -319,19 +327,28 @@ const AvailableQuotes = () => {
                     {/* Vendor Info */}
                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Vendor</p>
-                        <p className="text-gray-900 font-medium">
-                          {vendorName}
+                        <p className="text-lg font-semibold text-gray-900">
+                          Vendor Information
                         </p>
-                        <p className="text-sm text-gray-600 flex items-center">
+                        <p className="text-sm text-gray-800 flex items-center">
+                          <Store className="h-3 w-3 mr-1" />
+                          Company Name: {vendorName}
+                        </p>
+                        <p className="text-sm text-gray-800 flex items-center">
+                          <Contact className="h-3 w-3 mr-1" />
+                          Contact Person: {contactPerson}
+                        </p>
+                        <p className="text-sm text-gray-800 flex items-center">
                           <Mail className="h-3 w-3 mr-1" />
-                          {vendorEmail}
+                          Contact Email: {vendorEmail}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Quote Details</p>
+                        <p className="text-lg font-semibold text-gray-900">
+                          Quote Details
+                        </p>
                         <p className="text-gray-900">
-                          Total: $
+                          Grand Total: $
                           {(quote.totalPrice || quote.price || 0).toFixed(2)}
                         </p>
                         <p className="text-sm text-gray-600 flex items-center">
@@ -380,16 +397,16 @@ const AvailableQuotes = () => {
 
                   {/* Expanded Quote Details */}
                   {selectedQuote?._id === quote._id && (
-                    <div className="p-6 bg-gray-50">
+                    <div className="p-6 bg-gray-300">
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">
                         Quote Details
                       </h3>
 
                       {/* Books in Quote */}
                       <div className="mb-6">
-                        <h4 className="text-md font-medium text-gray-900 mb-3">
+                        {/* <h4 className="text-md font-medium text-gray-900 mb-3">
                           Books Quoted
-                        </h4>
+                        </h4> */}
                         <div className="space-y-4">
                           {quote.books?.map((book, index) => (
                             <div
@@ -426,10 +443,20 @@ const AvailableQuotes = () => {
                                     {book.quantity}
                                   </div>
                                 )}
-                                {book.price && (
+                                {book.unitPrice && (
                                   <div>
-                                    <span className="font-medium">Price:</span>{" "}
-                                    ${book.price.toFixed(2)}
+                                    <span className="font-medium">
+                                      Unit Price:
+                                    </span>{" "}
+                                    ${book.unitPrice.toFixed(2)}
+                                  </div>
+                                )}
+                                {book.totalPrice && (
+                                  <div>
+                                    <span className="font-medium text-black">
+                                      Total Price:
+                                    </span>{" "}
+                                    ${book.totalPrice.toFixed(2)}
                                   </div>
                                 )}
                               </div>
@@ -483,7 +510,7 @@ const AvailableQuotes = () => {
                             )}
                             <div className="flex justify-between border-t pt-2 mt-2">
                               <span className="text-gray-900 font-medium">
-                                Total:
+                                Grand Total:
                               </span>
                               <span className="text-gray-900 font-medium">
                                 ${(quote.totalPrice || 0).toFixed(2)}
